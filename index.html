@@ -1,86 +1,140 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Downloader</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎬 Video Downloader</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f6fa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f8fafc;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+      padding: 40px 20px;
     }
-    h2 { color: #2f3640; }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+    p {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+    }
     input {
       width: 80%;
       max-width: 500px;
-      padding: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
       font-size: 16px;
-      border: 1px solid #dcdde1;
-      border-radius: 5px;
+      outline: none;
       margin-bottom: 10px;
+      background: #1e293b;
+      color: white;
     }
     button {
-      background-color: #0984e3;
-      color: white;
+      padding: 12px 25px;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
+      transition: 0.3s;
     }
-    button:hover { background-color: #74b9ff; }
+    button:hover {
+      background: #1d4ed8;
+    }
     video {
-      margin-top: 20px;
-      max-width: 90%;
+      margin-top: 30px;
+      width: 90%;
+      max-width: 600px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
     }
-    .error { color: red; margin-top: 10px; }
+    .download-btn, .copy-btn {
+      display: inline-block;
+      margin: 15px 8px 0;
+      background: #16a34a;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+    .copy-btn {
+      background: #9333ea;
+    }
+    .download-btn:hover { background: #15803d; }
+    .copy-btn:hover { background: #7e22ce; }
+    .loading {
+      margin-top: 20px;
+      color: #a5b4fc;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
-  <h2>🎬 Linkdebhai Video Downloader</h2>
-  <input type="text" id="videoUrl" placeholder="Paste Linkdebhai video URL here...">
-  <button id="fetchBtn">Fetch Video</button>
 
-  <div id="output"></div>
+  <h1>🎥 Smart Video Downloader</h1>
+  <p>Paste your video link below 👇</p>
+
+  <input type="text" id="videoUrl" placeholder="Enter video page URL..." />
+  <br />
+  <button onclick="getVideo()">Get Video</button>
+
+  <div id="loading" class="loading"></div>
+  <div id="result"></div>
 
   <script>
-    const apiBase = "https://test-site-dl.woodmirror.workers.dev/?url=";
-    const btn = document.getElementById("fetchBtn");
-    const output = document.getElementById("output");
+    async function getVideo() {
+      const url = document.getElementById("videoUrl").value.trim();
+      const resultDiv = document.getElementById("result");
+      const loadingDiv = document.getElementById("loading");
+      resultDiv.innerHTML = "";
 
-    btn.addEventListener("click", async () => {
-      const userUrl = document.getElementById("videoUrl").value.trim();
-      output.innerHTML = "";
-      if (!userUrl) {
-        output.innerHTML = "<p class='error'>⚠️ Please enter a valid URL!</p>";
+      if (!url) {
+        alert("Please paste a video link first!");
         return;
       }
 
+      loadingDiv.innerHTML = "⏳ Fetching video link...";
       try {
-        const res = await fetch(apiBase + encodeURIComponent(userUrl));
+        // ✅ তোমার API endpoint
+        const apiUrl = https://test-site-dl.woodmirror.workers.dev/?url=${encodeURIComponent(url)};
+        const res = await fetch(apiUrl);
         const data = await res.json();
+        loadingDiv.innerHTML = "";
 
-        if (data.success && data.video.downloadLink) {
-          output.innerHTML = 
-            <h3>${data.video.title}</h3>
-            <video controls src="${data.video.downloadLink}"></video><br>
-            <a href="${data.video.downloadLink}" download>
-              <button>⬇️ Download Video</button>
-            </a>
+        if (data.success && data.video && data.video.downloadLink) {
+          const videoLink = data.video.downloadLink;
+
+          resultDiv.innerHTML = 
+            <h2>${data.video.title}</h2>
+            <video controls autoplay>
+              <source src="${videoLink}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <br>
+            <a href="${videoLink}" download class="download-btn">⬇️ Download Video</a>
+            <button class="copy-btn" onclick="copyToClipboard('${videoLink}')">📋 Copy Link</button>
           ;
         } else {
-          output.innerHTML = "<p class='error'>❌ No video found or invalid link.</p>";
+          resultDiv.innerHTML = <p style="color:red;">❌ Video not found. Please check the URL.</p>;
         }
-      } catch (err) {
-        output.innerHTML = <p class='error'>❌ Error fetching video: ${err.message}</p>;
+      } catch (error) {
+        loadingDiv.innerHTML = "";
+        resultDiv.innerHTML = <p style="color:red;">⚠️ Error fetching video: ${error.message}</p>;
       }
-    });
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("✅ Download link copied!");
+      });
+    }
   </script>
+
 </body>
 </html>
