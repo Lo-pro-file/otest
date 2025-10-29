@@ -1,140 +1,242 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🎬 Video Downloader</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #f8fafc;
-      font-family: "Poppins", sans-serif;
-      text-align: center;
-      padding: 40px 20px;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 15px;
-    }
-    p {
-      color: #cbd5e1;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 80%;
-      max-width: 500px;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-      margin-bottom: 10px;
-      background: #1e293b;
-      color: white;
-    }
-    button {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #1d4ed8;
-    }
-    video {
-      margin-top: 30px;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-    .download-btn, .copy-btn {
-      display: inline-block;
-      margin: 15px 8px 0;
-      background: #16a34a;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.3s;
-    }
-    .copy-btn {
-      background: #9333ea;
-    }
-    .download-btn:hover { background: #15803d; }
-    .copy-btn:hover { background: #7e22ce; }
-    .loading {
-      margin-top: 20px;
-      color: #a5b4fc;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Smart Video Player</title>
+<style>
+  :root{
+    --bg1:#0f172a; --bg2:#111827; --card:#0b1220; --muted:#9ca3af;
+    --accent:#2563eb; --success:#16a34a; --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#e6eef8;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:36px;
+  }
+  .wrap{
+    width:100%;
+    max-width:900px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-radius:14px;
+    padding:22px;
+    box-shadow:0 10px 30px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  h1{margin:0 0 6px;font-size:20px}
+  p.lead{margin:0 0 18px;color:var(--muted)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .input{
+    flex:1;
+    display:flex;
+    gap:8px;
+  }
+  input[type="text"]{
+    flex:1;
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.03);
+    padding:12px 14px;
+    border-radius:8px;
+    color: #e6eef8;
+    outline:none;
+    font-size:15px;
+  }
+  button.primary{
+    background:var(--accent);
+    color:white;
+    border:none;
+    padding:10px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .meta{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .video-wrap{
+    margin-top:18px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .player{
+    flex:1 1 540px;
+    max-width:100%;
+    background:var(--glass);
+    border-radius:10px;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  video{
+    width:100%;
+    border-radius:8px;
+    background:#000;
+  }
+  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{
+    padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;
+  }
+  .btn.download{background:var(--success);color:#051213}
+  .btn.copy{background:#7c3aed;color:white}
+  .info{color:var(--muted);font-size:14px}
+  .loading{margin-top:10px;color:var(--muted);font-size:14px}
+  .error{margin-top:12px;color:#ff7b7b;background:rgba(255,123,123,0.06);padding:8px;border-radius:8px}
+  @media (max-width:720px){ .row{flex-direction:column} .video-wrap{flex-direction:column} }
+</style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>Smart Video Player</h1>
+    <p class="lead">Paste page URL (your API will resolve the direct video link).</p>
 
-  <h1>🎥 Smart Video Downloader</h1>
-  <p>Paste your video link below 👇</p>
+    <div class="row">
+      <div class="input">
+        <input id="pageUrl" placeholder="Paste video page URL (e.g. https://linkdebhai.club/...)" />
+        <button id="goBtn" class="primary">Get & Play</button>
+      </div>
+    </div>
 
-  <input type="text" id="videoUrl" placeholder="Enter video page URL..." />
-  <br />
-  <button onclick="getVideo()">Get Video</button>
+    <div id="status" class="loading" aria-live="polite"></div>
+    <div id="errorBox" class="error" style="display:none"></div>
 
-  <div id="loading" class="loading"></div>
-  <div id="result"></div>
+    <div class="video-wrap" id="videoWrap" style="display:none">
+      <div class="player">
+        <div id="meta" style="width:100%;text-align:left">
+          <div id="title" style="font-weight:700"></div>
+          <div id="source" class="info"></div>
+        </div>
 
-  <script>
-    async function getVideo() {
-      const url = document.getElementById("videoUrl").value.trim();
-      const resultDiv = document.getElementById("result");
-      const loadingDiv = document.getElementById("loading");
-      resultDiv.innerHTML = "";
+        <div style="width:100%;margin-top:10px">
+          <!-- HTML5 player -->
+          <video id="player" controls preload="metadata" playsinline></video>
+        </div>
 
-      if (!url) {
-        alert("Please paste a video link first!");
-        return;
-      }
+        <div class="actions" id="actions">
+          <a id="downloadBtn" class="btn download" href="#" download>⬇️ Download</a>
+          <button id="copyBtn" class="btn copy">📋 Copy Link</button>
+        </div>
+        <div id="fileInfo" class="info"></div>
+      </div>
+    </div>
+  </div>
 
-      loadingDiv.innerHTML = "⏳ Fetching video link...";
+<script>
+(() => {
+  const apiBase = "https://test-site-dl.woodmirror.workers.dev/?url=";
+  const goBtn = document.getElementById("goBtn");
+  const pageUrl = document.getElementById("pageUrl");
+  const status = document.getElementById("status");
+  const errorBox = document.getElementById("errorBox");
+  const videoWrap = document.getElementById("videoWrap");
+  const player = document.getElementById("player");
+  const titleEl = document.getElementById("title");
+  const sourceEl = document.getElementById("source");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const copyBtn = document.getElementById("copyBtn");
+  const fileInfo = document.getElementById("fileInfo");
+
+  function showError(msg){
+    errorBox.style.display = "block";
+    errorBox.textContent = msg;
+    status.textContent = "";
+  }
+  function clearError(){
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+  }
+
+  async function resolveAndPlay(pageLink) {
+    clearError();
+    videoWrap.style.display = "none";
+    status.textContent = "⏳ Resolving direct link...";
+    try {
+      const res = await fetch(apiBase + encodeURIComponent(pageLink));
+      // If API returns HTML (error page), throw
+      const txt = await res.text();
+      let data;
       try {
-        // ✅ তোমার API endpoint
-        const apiUrl = https://test-site-dl.woodmirror.workers.dev/?url=${encodeURIComponent(url)};
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        loadingDiv.innerHTML = "";
-
-        if (data.success && data.video && data.video.downloadLink) {
-          const videoLink = data.video.downloadLink;
-
-          resultDiv.innerHTML = 
-            <h2>${data.video.title}</h2>
-            <video controls autoplay>
-              <source src="${videoLink}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <a href="${videoLink}" download class="download-btn">⬇️ Download Video</a>
-            <button class="copy-btn" onclick="copyToClipboard('${videoLink}')">📋 Copy Link</button>
-          ;
-        } else {
-          resultDiv.innerHTML = <p style="color:red;">❌ Video not found. Please check the URL.</p>;
-        }
-      } catch (error) {
-        loadingDiv.innerHTML = "";
-        resultDiv.innerHTML = <p style="color:red;">⚠️ Error fetching video: ${error.message}</p>;
+        data = JSON.parse(txt);
+      } catch(e){
+        throw new Error("API did not return JSON. Response starts with: " + txt.slice(0,120));
       }
-    }
 
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        alert("✅ Download link copied!");
-      });
+      if (!data.success || !data.video){
+        throw new Error("API returned no video info.");
+      }
+      const dl = data.video.downloadLink;
+      if (!dl){
+        throw new Error("No downloadLink found in API response.");
+      }
+
+      // Show meta
+      titleEl.textContent = data.video.title || "Untitled";
+      sourceEl.textContent = data.video.source || "";
+
+      // prepare player
+      // If it's HLS (.m3u8) — use hls.js if supported
+      const isHls = /\.m3u8(\?.*)?$/i.test(dl);
+      if (isHls && window.Hls) {
+        // use hls.js if available
+        const hls = new Hls();
+        hls.loadSource(dl);
+        hls.attachMedia(player);
+      } else if (isHls && player.canPlayType('application/vnd.apple.mpegurl')) {
+        player.src = dl;
+      } else {
+        // set as normal src
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+        player.src = dl;
+        // try to autoplay (user gesture may be required)
+        try { await player.play(); } catch(_) {}
+      }
+
+      // Setup download & copy buttons
+      downloadBtn.href = dl;
+      downloadBtn.setAttribute("download", "");
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(dl).then(()=> {
+          copyBtn.textContent = "Copied ✅";
+          setTimeout(()=> copyBtn.textContent = "📋 Copy Link", 1600);
+        });
+      };
+
+      // file size hint (if present)
+      fileInfo.textContent = data.video.fileSize ? ("Size: " + data.video.fileSize) : "";
+
+      // show UI
+      videoWrap.style.display = "flex";
+      status.textContent = "";
+    } catch (err) {
+      showError("Error: " + (err.message || err));
+      console.error(err);
     }
-  </script>
+  }
+
+  goBtn.addEventListener("click", () => {
+    const url = pageUrl.value.trim();
+    if (!url) { showError("Please paste a page URL."); return; }
+    resolveAndPlay(url);
+  });
+
+  // allow Enter key
+  pageUrl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") goBtn.click();
+  });
+})();
+</script>
+
+<!-- Optional: hls.js CDN loader (uncomment if you expect .m3u8) -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
 
 </body>
 </html>
