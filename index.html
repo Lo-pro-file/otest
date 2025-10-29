@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Downloader</title>
+  <title>🎥 Simple Video Downloader</title>
   <style>
     body {
       background: #0f172a;
@@ -57,12 +57,12 @@
 </head>
 <body>
 
-  <h1>🎥 Simple Video Downloader</h1>
+  <h1>🎬 Simple Video Downloader</h1>
   <p>Paste your video page link below 👇</p>
 
   <input type="text" id="videoUrl" placeholder="Enter video page URL...">
   <br>
-  <button onclick="getVideo()">Get Video</button>
+  <button id="getVideoBtn">Get Video</button>
 
   <div id="loading" class="loading"></div>
   <div id="result"></div>
@@ -82,8 +82,8 @@
       loadingDiv.innerHTML = "⏳ Fetching video link...";
       
       try {
-        // তোমার API endpoint
-        const apiUrl = https://test-site-dl.woodmirror.workers.dev/?url=${encodeURIComponent(url)};
+        // ✅ এখানে backtick না ব্যবহার করে plain string concat
+        const apiUrl = "https://test-site-dl.woodmirror.workers.dev/?url=" + encodeURIComponent(url);
         const res = await fetch(apiUrl);
         const data = await res.json();
 
@@ -108,6 +108,9 @@
         resultDiv.innerHTML = <p style="color:red;">⚠️ Error fetching video: ${error.message}</p>;
       }
     }
+
+    // ✅ Button event listener (onclick এর বদলে)
+    document.getElementById("getVideoBtn").addEventListener("click", getVideo);
   </script>
 
 </body>
