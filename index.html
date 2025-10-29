@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Downloader</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    video {
+      margin-top: 30px;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px #333;
+    }
+    a.download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      background: #16a34a;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      text-decoration: none;
+    }
+    .loading {
+      margin-top: 20px;
+      color: #a5b4fc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎥 Simple Video Downloader</h1>
+  <p>Paste your video page link below 👇</p>
+
+  <input type="text" id="videoUrl" placeholder="Enter video page URL...">
+  <br>
+  <button onclick="getVideo()">Get Video</button>
+
+  <div id="loading" class="loading"></div>
+  <div id="result"></div>
+
+  <script>
+    async function getVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      const resultDiv = document.getElementById('result');
+      const loadingDiv = document.getElementById('loading');
+      resultDiv.innerHTML = "";
+      
+      if (!url) {
+        alert("Please paste a video link first!");
+        return;
+      }
+
+      loadingDiv.innerHTML = "⏳ Fetching video link...";
+      
+      try {
+        // তোমার API endpoint
+        const apiUrl = https://test-site-dl.woodmirror.workers.dev/?url=${encodeURIComponent(url)};
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        loadingDiv.innerHTML = "";
+
+        if (data.success && data.video && data.video.downloadLink) {
+          resultDiv.innerHTML = 
+            <h2>${data.video.title}</h2>
+            <video controls poster="${data.video.poster || ''}">
+              <source src="${data.video.downloadLink}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <br>
+            <a href="${data.video.downloadLink}" target="_blank" class="download-btn">⬇️ Download Video</a>
+          ;
+        } else {
+          resultDiv.innerHTML = <p style="color:red;">❌ Video not found. Please check the URL.</p>;
+        }
+
+      } catch (error) {
+        loadingDiv.innerHTML = "";
+        resultDiv.innerHTML = <p style="color:red;">⚠️ Error fetching video: ${error.message}</p>;
+      }
+    }
+  </script>
+
+</body>
+</html>
