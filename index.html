@@ -73,7 +73,7 @@
       const resultDiv = document.getElementById('result');
       const loadingDiv = document.getElementById('loading');
       resultDiv.innerHTML = "";
-      
+
       if (!url) {
         alert("Please paste a video link first!");
         return;
@@ -82,10 +82,17 @@
       loadingDiv.innerHTML = "⏳ Fetching video link...";
       
       try {
-        // ✅ এখানে backtick না ব্যবহার করে plain string concat
         const apiUrl = "https://test-site-dl.woodmirror.workers.dev/?url=" + encodeURIComponent(url);
         const res = await fetch(apiUrl);
-        const data = await res.json();
+        const text = await res.text();
+
+        // try to parse as JSON
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error("API returned invalid response: " + text.slice(0, 200));
+        }
 
         loadingDiv.innerHTML = "";
 
@@ -105,11 +112,10 @@
 
       } catch (error) {
         loadingDiv.innerHTML = "";
-        resultDiv.innerHTML = <p style="color:red;">⚠️ Error fetching video: ${error.message}</p>;
+        resultDiv.innerHTML = <p style="color:red;">⚠️ ${error.message}</p>;
       }
     }
 
-    // ✅ Button event listener (onclick এর বদলে)
     document.getElementById("getVideoBtn").addEventListener("click", getVideo);
   </script>
 
