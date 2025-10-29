@@ -1,123 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎥 Simple Video Downloader</title>
+  <title>Video Downloader</title>
   <style>
     body {
-      background: #0f172a;
-      color: #fff;
       font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
+      background: #f5f6fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
+    h2 { color: #2f3640; }
     input {
       width: 80%;
+      max-width: 500px;
       padding: 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
       font-size: 16px;
+      border: 1px solid #dcdde1;
+      border-radius: 5px;
+      margin-bottom: 10px;
     }
     button {
-      padding: 10px 20px;
+      background-color: #0984e3;
+      color: white;
       border: none;
-      border-radius: 8px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #1e40af;
-    }
-    video {
-      margin-top: 30px;
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px #333;
-    }
-    a.download-btn {
-      display: inline-block;
-      margin-top: 15px;
-      background: #16a34a;
       padding: 10px 20px;
-      border-radius: 8px;
-      color: white;
-      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    .loading {
+    button:hover { background-color: #74b9ff; }
+    video {
       margin-top: 20px;
-      color: #a5b4fc;
+      max-width: 90%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
     }
+    .error { color: red; margin-top: 10px; }
   </style>
 </head>
 <body>
+  <h2>🎬 Linkdebhai Video Downloader</h2>
+  <input type="text" id="videoUrl" placeholder="Paste Linkdebhai video URL here...">
+  <button id="fetchBtn">Fetch Video</button>
 
-  <h1>🎬 Simple Video Downloader</h1>
-  <p>Paste your video page link below 👇</p>
-
-  <input type="text" id="videoUrl" placeholder="Enter video page URL...">
-  <br>
-  <button id="getVideoBtn">Get Video</button>
-
-  <div id="loading" class="loading"></div>
-  <div id="result"></div>
+  <div id="output"></div>
 
   <script>
-    async function getVideo() {
-      const url = document.getElementById('videoUrl').value.trim();
-      const resultDiv = document.getElementById('result');
-      const loadingDiv = document.getElementById('loading');
-      resultDiv.innerHTML = "";
+    const apiBase = "https://test-site-dl.woodmirror.workers.dev/?url=";
+    const btn = document.getElementById("fetchBtn");
+    const output = document.getElementById("output");
 
-      if (!url) {
-        alert("Please paste a video link first!");
+    btn.addEventListener("click", async () => {
+      const userUrl = document.getElementById("videoUrl").value.trim();
+      output.innerHTML = "";
+      if (!userUrl) {
+        output.innerHTML = "<p class='error'>⚠️ Please enter a valid URL!</p>";
         return;
       }
 
-      loadingDiv.innerHTML = "⏳ Fetching video link...";
-      
       try {
-        const apiUrl = "https://test-site-dl.woodmirror.workers.dev/?url=" + encodeURIComponent(url);
-        const res = await fetch(apiUrl);
-        const text = await res.text();
+        const res = await fetch(apiBase + encodeURIComponent(userUrl));
+        const data = await res.json();
 
-        // try to parse as JSON
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch {
-          throw new Error("API returned invalid response: " + text.slice(0, 200));
-        }
-
-        loadingDiv.innerHTML = "";
-
-        if (data.success && data.video && data.video.downloadLink) {
-          resultDiv.innerHTML = 
-            <h2>${data.video.title}</h2>
-            <video controls poster="${data.video.poster || ''}">
-              <source src="${data.video.downloadLink}" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-            <br>
-            <a href="${data.video.downloadLink}" target="_blank" class="download-btn">⬇️ Download Video</a>
+        if (data.success && data.video.downloadLink) {
+          output.innerHTML = 
+            <h3>${data.video.title}</h3>
+            <video controls src="${data.video.downloadLink}"></video><br>
+            <a href="${data.video.downloadLink}" download>
+              <button>⬇️ Download Video</button>
+            </a>
           ;
         } else {
-          resultDiv.innerHTML = <p style="color:red;">❌ Video not found. Please check the URL.</p>;
+          output.innerHTML = "<p class='error'>❌ No video found or invalid link.</p>";
         }
-
-      } catch (error) {
-        loadingDiv.innerHTML = "";
-        resultDiv.innerHTML = <p style="color:red;">⚠️ ${error.message}</p>;
+      } catch (err) {
+        output.innerHTML = <p class='error'>❌ Error fetching video: ${err.message}</p>;
       }
-    }
-
-    document.getElementById("getVideoBtn").addEventListener("click", getVideo);
+    });
   </script>
-
 </body>
 </html>
