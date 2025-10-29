@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Smart Video Player</title>
+<title>🎬 Smart Video Player</title>
 <style>
   :root{
-    --bg1:#0f172a; --bg2:#111827; --card:#0b1220; --muted:#9ca3af;
-    --accent:#2563eb; --success:#16a34a; --glass: rgba(255,255,255,0.03);
+    --bg1:#0a0f1f; --bg2:#121a2e; --card:#101827; --muted:#9ca3af;
+    --accent:#2563eb; --success:#22c55e; --glass: rgba(255,255,255,0.04);
   }
   *{box-sizing:border-box}
   body{
     margin:0;
     min-height:100vh;
     font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    background:radial-gradient(circle at top, var(--bg1), var(--bg2));
     color:#e6eef8;
     display:flex;
     align-items:center;
@@ -23,84 +23,130 @@
   }
   .wrap{
     width:100%;
-    max-width:900px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-    border-radius:14px;
-    padding:22px;
+    max-width:850px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    border-radius:16px;
+    padding:26px;
     box-shadow:0 10px 30px rgba(2,6,23,0.6);
-    border:1px solid rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.05);
   }
-  h1{margin:0 0 6px;font-size:20px}
-  p.lead{margin:0 0 18px;color:var(--muted)}
-  .row{display:flex;gap:12px;flex-wrap:wrap}
+
+  /* Header */
+  h1{
+    margin:0 0 8px;
+    font-size:26px;
+    font-weight:700;
+    text-align:center;
+    color:#fff;
+    text-shadow:0 0 20px #3b82f6, 0 0 10px #1d4ed8;
+  }
+  h1::before{
+    content:"✨ ";
+  }
+  h1::after{
+    content:" 🎧";
+  }
+  p.lead{
+    margin:0 0 18px;
+    color:var(--muted);
+    text-align:center;
+    font-size:15px;
+  }
+
+  .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
   .input{
     flex:1;
     display:flex;
     gap:8px;
+    justify-content:center;
   }
   input[type="text"]{
     flex:1;
+    max-width:500px;
     background:var(--card);
-    border:1px solid rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.05);
     padding:12px 14px;
     border-radius:8px;
-    color: #e6eef8;
+    color:#e6eef8;
     outline:none;
     font-size:15px;
+    transition:0.2s;
+  }
+  input[type="text"]:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 6px var(--accent);
   }
   button.primary{
     background:var(--accent);
     color:white;
     border:none;
-    padding:10px 14px;
+    padding:10px 16px;
     border-radius:8px;
     cursor:pointer;
     font-weight:600;
+    transition:0.3s;
   }
+  button.primary:hover{
+    background:#1d4ed8;
+  }
+
   .meta{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
   .video-wrap{
     margin-top:18px;
     display:flex;
+    justify-content:center;
     gap:14px;
     align-items:flex-start;
     flex-wrap:wrap;
   }
+
+  /* 🎥 Video Player */
   .player{
-    flex:1 1 540px;
-    max-width:100%;
+    flex:1 1 480px;
+    max-width:480px;
     background:var(--glass);
-    border-radius:10px;
-    padding:10px;
+    border-radius:12px;
+    padding:14px;
     display:flex;
     flex-direction:column;
     align-items:center;
+    box-shadow:0 0 25px rgba(255,255,255,0.05);
   }
   video{
     width:100%;
-    border-radius:8px;
+    border-radius:10px;
     background:#000;
+    max-height:270px; /* smaller player */
   }
-  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center}
   .btn{
     padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;
   }
-  .btn.download{background:var(--success);color:#051213}
-  .btn.copy{background:#7c3aed;color:white}
-  .info{color:var(--muted);font-size:14px}
-  .loading{margin-top:10px;color:var(--muted);font-size:14px}
-  .error{margin-top:12px;color:#ff7b7b;background:rgba(255,123,123,0.06);padding:8px;border-radius:8px}
-  @media (max-width:720px){ .row{flex-direction:column} .video-wrap{flex-direction:column} }
+  .btn.download{background:var(--success);color:#051213;box-shadow:0 0 8px rgba(34,197,94,0.4)}
+  .btn.copy{background:#7c3aed;color:white;box-shadow:0 0 8px rgba(124,58,237,0.4)}
+  .info{color:var(--muted);font-size:14px;margin-top:6px;text-align:center}
+  .loading{margin-top:10px;color:var(--muted);font-size:14px;text-align:center}
+  .error{
+    margin-top:12px;color:#ff7b7b;background:rgba(255,123,123,0.08);
+    padding:8px;border-radius:8px;text-align:center;
+  }
+
+  @media (max-width:720px){
+    .row{flex-direction:column;align-items:center}
+    .video-wrap{flex-direction:column;align-items:center}
+    .player{max-width:100%}
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Smart Video Player</h1>
-    <p class="lead">Paste page URL (your API will resolve the direct video link).</p>
+    <p class="lead">Paste your video page URL below & instantly play it 🔥</p>
 
     <div class="row">
       <div class="input">
         <input id="pageUrl" placeholder="Paste video page URL (e.g. https://linkdebhai.club/...)" />
-        <button id="goBtn" class="primary">Get & Play</button>
+        <button id="goBtn" class="primary">🎬 Get & Play</button>
       </div>
     </div>
 
@@ -115,7 +161,6 @@
         </div>
 
         <div style="width:100%;margin-top:10px">
-          <!-- HTML5 player -->
           <video id="player" controls preload="metadata" playsinline></video>
         </div>
 
@@ -156,87 +201,59 @@
   async function resolveAndPlay(pageLink) {
     clearError();
     videoWrap.style.display = "none";
-    status.textContent = "⏳ Resolving direct link...";
+    status.textContent = "🔄 Resolving direct video link...";
     try {
       const res = await fetch(apiBase + encodeURIComponent(pageLink));
-      // If API returns HTML (error page), throw
       const txt = await res.text();
       let data;
       try {
         data = JSON.parse(txt);
       } catch(e){
-        throw new Error("API did not return JSON. Response starts with: " + txt.slice(0,120));
+        throw new Error("Invalid JSON returned by API");
       }
 
-      if (!data.success || !data.video){
-        throw new Error("API returned no video info.");
+      if (!data.success  !data.video  !data.video.downloadLink){
+        throw new Error("No playable link found!");
       }
+
       const dl = data.video.downloadLink;
-      if (!dl){
-        throw new Error("No downloadLink found in API response.");
-      }
-
-      // Show meta
       titleEl.textContent = data.video.title || "Untitled";
       sourceEl.textContent = data.video.source || "";
 
-      // prepare player
-      // If it's HLS (.m3u8) — use hls.js if supported
-      const isHls = /\.m3u8(\?.*)?$/i.test(dl);
-      if (isHls && window.Hls) {
-        // use hls.js if available
-        const hls = new Hls();
-        hls.loadSource(dl);
-        hls.attachMedia(player);
-      } else if (isHls && player.canPlayType('application/vnd.apple.mpegurl')) {
-        player.src = dl;
-      } else {
-        // set as normal src
-        player.pause();
-        player.removeAttribute("src");
-        player.load();
-        player.src = dl;
-        // try to autoplay (user gesture may be required)
-        try { await player.play(); } catch(_) {}
-      }
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+      player.src = dl;
+      try { await player.play(); } catch(_) {}
 
-      // Setup download & copy buttons
       downloadBtn.href = dl;
-      downloadBtn.setAttribute("download", "");
       copyBtn.onclick = () => {
-        navigator.clipboard.writeText(dl).then(()=> {
-          copyBtn.textContent = "Copied ✅";
-          setTimeout(()=> copyBtn.textContent = "📋 Copy Link", 1600);
+        navigator.clipboard.writeText(dl).then(()=>{
+          copyBtn.textContent = "✅ Copied!";
+          setTimeout(()=>copyBtn.textContent="📋 Copy Link",1500);
         });
       };
 
-      // file size hint (if present)
-      fileInfo.textContent = data.video.fileSize ? ("Size: " + data.video.fileSize) : "";
-
-      // show UI
+      fileInfo.textContent = data.video.fileSize ? "Size: "+data.video.fileSize : "";
       videoWrap.style.display = "flex";
       status.textContent = "";
     } catch (err) {
-      showError("Error: " + (err.message || err));
+      showError("❌ "+err.message);
       console.error(err);
     }
   }
 
   goBtn.addEventListener("click", () => {
     const url = pageUrl.value.trim();
-    if (!url) { showError("Please paste a page URL."); return; }
+    if (!url){ showError("⚠️ Please paste a valid page URL."); return; }
     resolveAndPlay(url);
   });
 
-  // allow Enter key
   pageUrl.addEventListener("keydown", (e) => {
     if (e.key === "Enter") goBtn.click();
   });
 })();
 </script>
-
-<!-- Optional: hls.js CDN loader (uncomment if you expect .m3u8) -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script> -->
 
 </body>
 </html>
