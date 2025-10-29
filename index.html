@@ -3,19 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>🎬 Smart Video Player</title>
+<title>Smart Video Player</title>
 <style>
   :root{
-    --bg1:#0a0f1f; --bg2:#121a2e; --card:#101827; --muted:#9ca3af;
-    --accent:#2563eb; --success:#22c55e; --glass: rgba(255,255,255,0.04);
+    --bg1:#0f172a; --bg2:#1e293b; --card:#111827; --muted:#9ca3af;
+    --accent:#2563eb; --success:#16a34a; --error:#ef4444;
+    --glass: rgba(255,255,255,0.05);
   }
   *{box-sizing:border-box}
   body{
     margin:0;
     min-height:100vh;
-    font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    background:radial-gradient(circle at top, var(--bg1), var(--bg2));
-    color:#e6eef8;
+    font-family:"Poppins",Inter,system-ui,Segoe UI,Roboto;
+    background:linear-gradient(145deg,var(--bg1),var(--bg2));
+    color:#f1f5f9;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -23,148 +24,106 @@
   }
   .wrap{
     width:100%;
-    max-width:850px;
-    background:linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
-    border-radius:16px;
-    padding:26px;
-    box-shadow:0 10px 30px rgba(2,6,23,0.6);
-    border:1px solid rgba(255,255,255,0.05);
+    max-width:880px;
+    background:var(--glass);
+    border-radius:20px;
+    padding:30px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+    border:1px solid rgba(255,255,255,0.08);
+    animation:fadeIn 0.8s ease;
   }
-
-  /* Header */
-  h1{
-    margin:0 0 8px;
-    font-size:26px;
-    font-weight:700;
-    text-align:center;
-    color:#fff;
-    text-shadow:0 0 20px #3b82f6, 0 0 10px #1d4ed8;
+  @keyframes fadeIn {
+    from{opacity:0;transform:translateY(15px)}
+    to{opacity:1;transform:translateY(0)}
   }
-  h1::before{
-    content:"✨ ";
-  }
-  h1::after{
-    content:" 🎧";
-  }
-  p.lead{
-    margin:0 0 18px;
-    color:var(--muted);
-    text-align:center;
-    font-size:15px;
-  }
-
-  .row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-  .input{
-    flex:1;
-    display:flex;
-    gap:8px;
-    justify-content:center;
-  }
+  h1{margin:0;font-size:24px;font-weight:600;color:#fff}
+  p.lead{margin:4px 0 20px;color:var(--muted)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
   input[type="text"]{
     flex:1;
-    max-width:500px;
     background:var(--card);
-    border:1px solid rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
     padding:12px 14px;
-    border-radius:8px;
+    border-radius:10px;
     color:#e6eef8;
     outline:none;
     font-size:15px;
-    transition:0.2s;
-  }
-  input[type="text"]:focus{
-    border-color:var(--accent);
-    box-shadow:0 0 6px var(--accent);
   }
   button.primary{
     background:var(--accent);
     color:white;
     border:none;
-    padding:10px 16px;
-    border-radius:8px;
+    padding:12px 18px;
+    border-radius:10px;
     cursor:pointer;
     font-weight:600;
-    transition:0.3s;
+    transition:0.2s;
   }
-  button.primary:hover{
-    background:#1d4ed8;
-  }
-
-  .meta{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  .video-wrap{
-    margin-top:18px;
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    align-items:flex-start;
-    flex-wrap:wrap;
-  }
-
-  /* 🎥 Video Player */
+  button.primary:hover{background:#1d4ed8;transform:scale(1.04)}
+  .video-wrap{margin-top:24px;display:none;flex-direction:column;gap:14px}
   .player{
-    flex:1 1 480px;
-    max-width:480px;
-    background:var(--glass);
-    border-radius:12px;
+    background:var(--card);
+    border-radius:14px;
     padding:14px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    box-shadow:0 0 25px rgba(255,255,255,0.05);
+    box-shadow:inset 0 0 20px rgba(255,255,255,0.03);
   }
   video{
     width:100%;
-    border-radius:10px;
+    border-radius:12px;
     background:#000;
-    max-height:270px; /* smaller player */
   }
-  .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+  .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
   .btn{
-    padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;
+    padding:9px 14px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.2s;
   }
-  .btn.download{background:var(--success);color:#051213;box-shadow:0 0 8px rgba(34,197,94,0.4)}
-  .btn.copy{background:#7c3aed;color:white;box-shadow:0 0 8px rgba(124,58,237,0.4)}
-  .info{color:var(--muted);font-size:14px;margin-top:6px;text-align:center}
-  .loading{margin-top:10px;color:var(--muted);font-size:14px;text-align:center}
+  .btn.download{background:var(--success);color:white;}
+  .btn.copy{background:#7c3aed;color:white;}
+  .btn:hover{opacity:0.9;transform:scale(1.03)}
+  .info{color:var(--muted);font-size:14px;margin-top:6px}
+  .loading{margin-top:10px;color:var(--muted);font-size:14px}
   .error{
-    margin-top:12px;color:#ff7b7b;background:rgba(255,123,123,0.08);
-    padding:8px;border-radius:8px;text-align:center;
+    margin-top:14px;
+    color:#fff;
+    background:rgba(239,68,68,0.15);
+    border:1px solid var(--error);
+    padding:10px;
+    border-radius:10px;
   }
-
   @media (max-width:720px){
-    .row{flex-direction:column;align-items:center}
-    .video-wrap{flex-direction:column;align-items:center}
-    .player{max-width:100%}
+    .row{flex-direction:column}
+    button.primary{width:100%}
   }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Smart Video Player</h1>
-    <p class="lead">Paste your video page URL below & instantly play it 🔥</p>
+    <h1>🎬 Smart Video Player</h1>
+    <p class="lead">Paste your <b>video page URL</b> below and play instantly!</p>
 
     <div class="row">
-      <div class="input">
-        <input id="pageUrl" placeholder="Paste video page URL (e.g. https://linkdebhai.club/...)" />
-        <button id="goBtn" class="primary">🎬 Get & Play</button>
-      </div>
+      <input id="pageUrl" placeholder="Example: https://linkdebhai.club/video/..." />
+      <button id="goBtn" class="primary">Get & Play ▶️</button>
     </div>
 
     <div id="status" class="loading" aria-live="polite"></div>
     <div id="errorBox" class="error" style="display:none"></div>
 
-    <div class="video-wrap" id="videoWrap" style="display:none">
+    <div class="video-wrap" id="videoWrap">
       <div class="player">
-        <div id="meta" style="width:100%;text-align:left">
-          <div id="title" style="font-weight:700"></div>
+        <div id="meta">
+          <div id="title" style="font-weight:700;font-size:18px;margin-bottom:4px"></div>
           <div id="source" class="info"></div>
         </div>
 
-        <div style="width:100%;margin-top:10px">
-          <video id="player" controls preload="metadata" playsinline></video>
-        </div>
+        <video id="player" controls preload="metadata" playsinline></video>
 
-        <div class="actions" id="actions">
+        <div class="actions">
           <a id="downloadBtn" class="btn download" href="#" download>⬇️ Download</a>
           <button id="copyBtn" class="btn copy">📋 Copy Link</button>
         </div>
@@ -189,71 +148,59 @@
   const fileInfo = document.getElementById("fileInfo");
 
   function showError(msg){
-    errorBox.style.display = "block";
-    errorBox.textContent = msg;
-    status.textContent = "";
+    errorBox.style.display="block";
+    errorBox.textContent=msg;
+    status.textContent="";
   }
   function clearError(){
-    errorBox.style.display = "none";
-    errorBox.textContent = "";
+    errorBox.style.display="none";
+    errorBox.textContent="";
   }
 
-  async function resolveAndPlay(pageLink) {
+  async function resolveAndPlay(pageLink){
     clearError();
-    videoWrap.style.display = "none";
-    status.textContent = "🔄 Resolving direct video link...";
-    try {
-      const res = await fetch(apiBase + encodeURIComponent(pageLink));
-      const txt = await res.text();
+    videoWrap.style.display="none";
+    status.textContent="⏳ Fetching video link...";
+    try{
+      const res=await fetch(apiBase+encodeURIComponent(pageLink));
+      const txt=await res.text();
       let data;
-      try {
-        data = JSON.parse(txt);
-      } catch(e){
-        throw new Error("Invalid JSON returned by API");
-      }
+      try{ data=JSON.parse(txt);}catch(e){throw new Error("Invalid API JSON.");}
+      if(!data.success||!data.video)throw new Error("API returned no video info.");
+      const dl=data.video.downloadLink;
+      if(!dl)throw new Error("No downloadLink found.");
 
-      if (!data.success  !data.video  !data.video.downloadLink){
-        throw new Error("No playable link found!");
-      }
+      titleEl.textContent=data.video.title||"Untitled";
+      sourceEl.textContent=data.video.source||"";
+      player.src=dl;
+      await player.play().catch(()=>{});
 
-      const dl = data.video.downloadLink;
-      titleEl.textContent = data.video.title || "Untitled";
-      sourceEl.textContent = data.video.source || "";
-
-      player.pause();
-      player.removeAttribute("src");
-      player.load();
-      player.src = dl;
-      try { await player.play(); } catch(_) {}
-
-      downloadBtn.href = dl;
-      copyBtn.onclick = () => {
+      downloadBtn.href=dl;
+      copyBtn.onclick=()=>{
         navigator.clipboard.writeText(dl).then(()=>{
-          copyBtn.textContent = "✅ Copied!";
+          copyBtn.textContent="✅ Copied!";
           setTimeout(()=>copyBtn.textContent="📋 Copy Link",1500);
         });
       };
 
-      fileInfo.textContent = data.video.fileSize ? "Size: "+data.video.fileSize : "";
-      videoWrap.style.display = "flex";
-      status.textContent = "";
-    } catch (err) {
-      showError("❌ "+err.message);
+      fileInfo.textContent=data.video.fileSize?("Size: "+data.video.fileSize):"";
+      videoWrap.style.display="flex";
+      status.textContent="";
+    }catch(err){
+      showError("❌ "+(err.message||err));
       console.error(err);
     }
   }
 
-  goBtn.addEventListener("click", () => {
-    const url = pageUrl.value.trim();
-    if (!url){ showError("⚠️ Please paste a valid page URL."); return; }
+  goBtn.addEventListener("click",()=>{
+    const url=pageUrl.value.trim();
+    if(!url)return showError("Please paste a valid URL.");
     resolveAndPlay(url);
   });
-
-  pageUrl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") goBtn.click();
+  pageUrl.addEventListener("keydown",e=>{
+    if(e.key==="Enter")goBtn.click();
   });
 })();
 </script>
-
 </body>
 </html>
